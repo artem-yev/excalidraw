@@ -50,6 +50,32 @@ export class AppFlowchart {
     this.navigator.clear();
   };
 
+  /** A single click is a complete creation transaction, not a pending cluster. */
+  createNode = (direction: LinkDirection) => {
+    const selected = getSelectedElements(
+      this.app.scene.getNonDeletedElementsMap(),
+      this.app.state,
+    );
+    const node = selected[0];
+    if (
+      selected.length !== 1 ||
+      node.locked ||
+      (node.type !== "rectangle" && node.type !== "diamond")
+    ) {
+      return;
+    }
+    this.clear();
+    this.creator.createNodes(node, this.app.state, direction, this.app.scene);
+    const nodes = this.creator.pendingNodes ?? [];
+    this.clear();
+    if (nodes.length) {
+      this.app.insertNewElements(nodes);
+      this.selectAndReveal(nodes[0]);
+      this.captureUpdate();
+    }
+    this.app.focusContainer();
+  };
+
   handleKeyEvent = (event: React.KeyboardEvent | KeyboardEvent): boolean => {
     const operation = this.resolveKeyboardEventToOperation(event);
 

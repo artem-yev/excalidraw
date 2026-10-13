@@ -1,0 +1,32 @@
+.excalidraw .flowchart-plus {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--zIndex-canvasButtons);
+
+  &__button {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-primary);
+    border-radius: 50%;
+    background: var(--island-bg-color);
+    color: var(--color-primary);
+    font: 22px/1 sans-serif;
+    cursor: pointer;
+    pointer-events: auto;
+    padding: 0;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-primary);
+      color: var(--island-bg-color);
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+}
