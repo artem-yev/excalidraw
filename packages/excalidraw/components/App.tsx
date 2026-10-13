@@ -384,6 +384,7 @@ import { AppCursor } from "./App.cursor";
 import { AppDrawShape } from "./App.drawshape";
 import { AppDuplicate } from "./App.duplicate";
 import { AppFlowchart } from "./App.flowchart";
+import { FlowchartPlus } from "./FlowchartPlus";
 import { AppModifiers } from "./App.modifiers";
 import { AppPan } from "./App.pan";
 import { AppViewport, RIGHT_SIDEBAR_WIDTH } from "./App.viewport";
@@ -2438,6 +2439,16 @@ class App extends React.Component<AppProps, AppState> {
                         <ExcalidrawActionManagerContext.Provider
                           value={this.actionManager}
                         >
+                          {this.isDefaultUIEnabled() &&
+                            this.isInteractionEnabled() &&
+                            !this.flowchart.isCreatingChart &&
+                            selectedElements.length === 1 && (
+                              <FlowchartPlus
+                                element={firstSelectedElement}
+                                appState={this.state}
+                                onCreate={this.flowchart.createNode}
+                              />
+                            )}
                           <LayerUI
                             canvas={this.canvas}
                             appState={this.state}
