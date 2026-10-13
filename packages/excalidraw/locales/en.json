@@ -1,5 +1,15 @@
 {
   "labels": {
+    "flowchartAddStep": "Add step",
+    "flowchartDirection": "Choose next step direction",
+    "flowchartAddup": "Add step above",
+    "flowchartAddright": "Add step to the right",
+    "flowchartAdddown": "Add step below",
+    "flowchartAddleft": "Add step to the left",
+    "flowchartup": "Up",
+    "flowchartright": "Right",
+    "flowchartdown": "Down",
+    "flowchartleft": "Left",
     "signUp": "Sign up",
     "signIn": "Sign in",
     "upgrade": "Upgrade",
