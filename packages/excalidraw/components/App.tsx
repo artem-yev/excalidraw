@@ -384,6 +384,7 @@ import { AppCursor } from "./App.cursor";
 import { AppDrawShape } from "./App.drawshape";
 import { AppDuplicate } from "./App.duplicate";
 import { AppFlowchart } from "./App.flowchart";
+import { FlowchartDragHandles } from "./FlowchartDragHandles";
 import { AppModifiers } from "./App.modifiers";
 import { AppPan } from "./App.pan";
 import { AppViewport, RIGHT_SIDEBAR_WIDTH } from "./App.viewport";
@@ -2481,6 +2482,10 @@ class App extends React.Component<AppProps, AppState> {
                           </LayerUI>
 
                           <div className="excalidraw-textEditorContainer" />
+                          {this.isDefaultUIEnabled() &&
+                            this.isInteractionEnabled() && (
+                              <FlowchartDragHandles app={this} />
+                            )}
                           <div className="excalidraw-contextMenuContainer" />
                           <div className="excalidraw-eye-dropper-container" />
                           <SVGLayer

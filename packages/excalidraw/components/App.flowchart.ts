@@ -7,12 +7,16 @@ import {
   FlowChartNavigator,
   getSelectedElements,
   isFlowchartNodeElement,
+  addFlowchartNodeAt,
+  Scene,
   type LinkDirection,
 } from "@excalidraw/element";
 
 import type {
   ExcalidrawElement,
   NonDeletedExcalidrawElement,
+  ExcalidrawFlowchartNodeElement,
+  NonDeleted,
 } from "@excalidraw/element/types";
 
 import type React from "react";
@@ -33,11 +37,12 @@ type FlowchartOperation =
 export class AppFlowchart {
   private creator = new FlowChartCreator();
   private navigator = new FlowChartNavigator();
+  private dragPending: PendingExcalidrawElements | null = null;
 
   constructor(private app: App) {}
 
   get pendingNodes() {
-    return this.creator.pendingNodes;
+    return this.dragPending ?? this.creator.pendingNodes;
   }
 
   get isCreatingChart() {
@@ -46,9 +51,57 @@ export class AppFlowchart {
 
   /** ends any in-progress flowchart creation/navigation session */
   clear = () => {
+    this.dragPending = null;
     this.creator.clear();
     this.navigator.clear();
   };
+
+  previewDrag(
+    node: NonDeleted<ExcalidrawFlowchartNodeElement>,
+    direction: LinkDirection,
+    position: { x: number; y: number },
+  ) {
+    // Binding mutates its targets. A separate scene ensures the real source
+    // (including its version and boundElements) is untouched until pointerup.
+    const previewScene = new Scene();
+    const source = { ...node };
+    previewScene.replaceAllElements(
+      this.app.scene
+        .getElementsIncludingDeleted()
+        .map((element) => (element.id === node.id ? source : element)),
+    );
+    this.dragPending = addFlowchartNodeAt(
+      source,
+      this.app.state,
+      direction,
+      previewScene,
+      position,
+    );
+    this.app.triggerRender(true);
+  }
+
+  cancelDrag = () => {
+    this.dragPending = null;
+    this.app.triggerRender(true);
+  };
+
+  commitDrag(
+    node: NonDeleted<ExcalidrawFlowchartNodeElement>,
+    direction: LinkDirection,
+    position: { x: number; y: number },
+  ) {
+    this.dragPending = null;
+    const nodes = addFlowchartNodeAt(
+      node,
+      this.app.state,
+      direction,
+      this.app.scene,
+      position,
+    );
+    this.app.insertNewElements(nodes);
+    this.selectAndReveal(nodes[0]);
+    this.captureUpdate();
+  }
 
   handleKeyEvent = (event: React.KeyboardEvent | KeyboardEvent): boolean => {
     const operation = this.resolveKeyboardEventToOperation(event);

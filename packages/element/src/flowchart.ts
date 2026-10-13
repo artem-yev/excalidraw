@@ -307,6 +307,53 @@ export const addNewNodes = (
   return { nodes, crossStart };
 };
 
+/** Create a single freely positioned successor using the normal flowchart style
+ * and binding rules. Call against an isolated Scene for disposable previews. */
+export const addFlowchartNodeAt = (
+  startNode: NonDeleted<ExcalidrawFlowchartNodeElement>,
+  appState: AppState,
+  direction: LinkDirection,
+  scene: Scene,
+  position: { x: number; y: number },
+): NonDeletedExcalidrawElement[] => {
+  const nextNode = cloneFlowchartNode(startNode, position.x, position.y);
+  const arrow = createBindingArrow(
+    startNode,
+    nextNode,
+    direction,
+    appState,
+    scene,
+  );
+  const frame = startNode.frameId
+    ? scene.getNonDeletedElement(startNode.frameId)
+    : null;
+  if (
+    frame &&
+    isFrameElement(frame) &&
+    [nextNode, arrow].every(
+      (element) =>
+        elementsAreInFrameBounds(
+          [element],
+          frame,
+          scene.getNonDeletedElementsMap(),
+        ) ||
+        elementOverlapsWithFrame(
+          element,
+          frame,
+          scene.getNonDeletedElementsMap(),
+        ),
+    )
+  ) {
+    mutateElement(nextNode, scene.getNonDeletedElementsMap(), {
+      frameId: frame.id,
+    });
+    mutateElement(arrow, scene.getNonDeletedElementsMap(), {
+      frameId: frame.id,
+    });
+  }
+  return [nextNode, arrow];
+};
+
 const createBindingArrow = (
   startBindingElement: NonDeleted<ExcalidrawFlowchartNodeElement>,
   endBindingElement: NonDeleted<ExcalidrawFlowchartNodeElement>,
