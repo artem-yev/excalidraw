@@ -1,0 +1,35 @@
+name: CI and promote to staging
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run smoke tests
+        run: node --test ci/smoke.test.mjs
+
+  promote-to-staging:
+    # Only after a merge to master, and only if tests passed.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fast-forward staging to master
+        run: |
+          git push origin HEAD:refs/heads/staging --force
+          echo "Promoted ${GITHUB_SHA} to staging (a deploy tool such as Vercel would deploy it from here)." >> "$GITHUB_STEP_SUMMARY"
