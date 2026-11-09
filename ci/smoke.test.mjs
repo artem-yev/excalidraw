@@ -14,3 +14,7 @@ test("app entry point exists", () => {
 test("flowchart module exists", () => {
   assert.ok(existsSync("packages/element/src/flowchart.ts"));
 });
+
+test("README exists", () => {
+  assert.ok(existsSync("README.md"));
+});
