@@ -50,6 +50,31 @@ export class AppFlowchart {
     this.navigator.clear();
   };
 
+  /** Pointer-driven counterpart of Ctrl/Cmd + Arrow, committed in one step. */
+  addStep = (direction: LinkDirection) => {
+    const selected = getSelectedElements(
+      this.app.scene.getNonDeletedElementsMap(),
+      this.app.state,
+    );
+    const node = selected[0];
+    if (
+      selected.length !== 1 ||
+      (node.type !== "rectangle" && node.type !== "diamond") ||
+      this.isCreatingChart
+    ) {
+      return;
+    }
+    this.creator.createNodes(node, this.app.state, direction, this.app.scene);
+    const nodes = this.creator.pendingNodes ?? [];
+    this.creator.clear();
+    this.app.insertNewElements(nodes);
+    if (nodes[0]) {
+      this.selectAndReveal(nodes[0]);
+    }
+    this.captureUpdate();
+    this.app.focusContainer();
+  };
+
   handleKeyEvent = (event: React.KeyboardEvent | KeyboardEvent): boolean => {
     const operation = this.resolveKeyboardEventToOperation(event);
 

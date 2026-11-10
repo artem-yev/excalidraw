@@ -1,0 +1,55 @@
+.excalidraw {
+  .flowchart-add-step {
+    position: absolute;
+    z-index: var(--zIndex-canvasButtons);
+    width: 152px;
+    background: var(--island-bg-color);
+    color: var(--text-primary-color);
+    border: 1px solid var(--default-border-color);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+    overflow: hidden;
+
+    button {
+      color: inherit;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      min-height: 34px;
+
+      &:hover {
+        background: var(--button-hover-bg);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: -3px;
+      }
+    }
+
+    &__trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    &__directions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 4px;
+      border-top: 1px solid var(--default-border-color);
+
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border-radius: 6px;
+      }
+    }
+  }
+}
